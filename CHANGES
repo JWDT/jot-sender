@@ -22,3 +22,12 @@ Version 0.3
 Released on May 11th 2016
 
 - Added Python 3.x support
+
+
+Version 0.3.1
+`````````````
+
+Released on January 5th 2018
+Changes made by John Thomson
+
+- Added JMail to accept URL in smtp, smtpt, smtps formats.

@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 
-__version__ = '0.3'
+__version__ = '0.3.1'
 
 import sys
 import smtplib
@@ -28,6 +28,7 @@ charset.add_charset('utf-8', charset.SHORTEST, None, 'utf-8')
 
 PY2 = sys.version_info[0] == 2
 if not PY2:
+    from urllib.parse import urlparse
     text_type = str
     string_types = (str,)
     integer_types = (int,)
@@ -36,6 +37,7 @@ if not PY2:
     itervalues = lambda d: iter(d.values())
     iteritems = lambda d: iter(d.items())
 else:
+    from urlparse import urlparse
     text_type = unicode
     string_types = (str, unicode)
     integer_types = (int, long)
@@ -100,6 +102,21 @@ class Mail(object):
         """Shortcut for send.
         """
         self.send(Message(*args, **kwargs))
+
+
+class JMail(Mail):
+    """Wrapper around Mail that allows passing SMTP server details
+    as a URL string.
+
+    :param url_string: smtp://<user>:<password>@<host>:<port>/<url-path>
+    https://tools.ietf.org/html/rfc1738
+    """
+
+    def __init__(self, url_string, debug_level=None, from_address=None):
+        url = urlparse(url_string)
+        use_tls = url.scheme == 'smtpt'
+        use_ssl = url.scheme == 'smtps'
+        Mail.__init__(self, url.hostname, url.username, url.password, url.port, use_tls, use_ssl, debug_level, from_address)
 
 
 class Connection(object):
